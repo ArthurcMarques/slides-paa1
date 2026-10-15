@@ -254,6 +254,23 @@ for i,s in enumerate(original,1):
     slides.append(s)
 
 comparison_start=len(slides)+1
+new('Computador utilizado nos testes','DELL OPTIPLEX 3060')
+specs=[
+    ('Processador','Intel Core i5-8500T, 8ª geração'),
+    ('Frequência base','2,10 GHz'),
+    ('Núcleos e threads','6 núcleos e 6 threads'),
+    ('Memória RAM','16 GB — 2 módulos de 8 GB'),
+    ('Tecnologia da RAM','DDR4, 2400 MT/s'),
+    ('Armazenamento','SSD NVMe ADATA SM2P41C3, 256 GB'),
+    ('Sistema operacional','Ubuntu Server')]
+for i,(label,value) in enumerate(specs):
+    y=292+i*80
+    if i%2==0:box((105,y-8,1800,y+64),'white')
+    text(135,y+9,label,34,True,TEAL)
+    text(650,y+9,value,34)
+note('Configuração informada no relatório do trabalho.')
+save('Computador utilizado nos testes');slides[-1]['part']='Comparação'
+
 new('Selection Sort × Shell Sort','COMPARAÇÃO COM SHELL POR METADES')
 for x,title,body in [
     (105,'Selection Sort','Melhor caso: Θ(n²)\nPior caso: Θ(n²)\nBusca o menor a cada rodada.'),
