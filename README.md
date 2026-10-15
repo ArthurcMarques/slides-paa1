@@ -61,11 +61,11 @@ Se o Cloudflared existente é o túnel usado para publicar seus serviços, adici
 
 - Hostname: `paa1.arthurcmarques.com.br`.
 - Tipo do serviço: `HTTP`.
-- URL do serviço: `IP_DO_HOMELAB:8080` (use um IP da rede local alcançável pelo container Cloudflared).
+- URL do serviço: `http://slides:80`.
 
-Como o Cloudflared está em outro container, `localhost:8080` aponta para o próprio Cloudflared. Use o IP do host nesse modelo. O túnel oferece o acesso HTTPS pelo domínio; a página é servida em HTTP dentro da rede.
+O Compose conecta a página à rede externa `homelab`, já usada pelo Cloudflared. Essa rede deve existir no servidor. Assim, o Tunnel encontra o serviço pelo nome `slides`, sem usar o IP local. `localhost` dentro do Cloudflared aponta para o próprio container.
 
-Nesse modelo, o Cloudflared encaminha diretamente para a página na porta 8080. A configuração atual serve HTTP; o HTTPS público fica a cargo do Cloudflare Tunnel.
+Nesse modelo, o Cloudflared encaminha diretamente para a página na porta interna 80. A porta 8080 do host continua disponível para testes na rede local. A configuração atual serve HTTP; o HTTPS público fica a cargo do Cloudflare Tunnel.
 
 Para publicação direta na Internet sem túnel, configure o DNS, as portas do roteador e um certificado TLS no servidor HTTP; essa configuração não está incluída.
 

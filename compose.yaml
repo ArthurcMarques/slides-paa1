@@ -5,3 +5,10 @@ services:
     restart: unless-stopped
     ports:
       - "${SLIDES_BIND_ADDRESS:-0.0.0.0}:${SLIDES_PORT:-8080}:80"
+    networks:
+      - homelab
+
+networks:
+  homelab:
+    external: true
+    name: homelab
