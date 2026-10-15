@@ -3,6 +3,7 @@
 /distribuicao/
 __pycache__/
 *.pyc
+.env
 
 # Metadados locais da versão anterior e da hospedagem
 /historico/selection-sort/.git/

@@ -1,0 +1,7 @@
+services:
+  slides:
+    build: .
+    image: paa1-slides:local
+    restart: unless-stopped
+    ports:
+      - "${SLIDES_BIND_ADDRESS:-0.0.0.0}:${SLIDES_PORT:-8080}:80"
