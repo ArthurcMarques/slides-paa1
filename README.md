@@ -10,6 +10,7 @@ Abra `Shell_e_Selection_Sort.html` no navegador. O arquivo é completo e funcion
 - `historico/selection-sort/`: versão anterior de Selection Sort, usada como base e preservada com seus arquivos de projeto.
 - `distribuicao/`: pacotes ZIP para compartilhar.
 - `site/`: site estático pronto para o Nginx, com `index.html`.
+- `graficos/referencia/`: gráficos fornecidos para orientar os slides de resultados.
 
 ## Gerar novamente
 
@@ -19,7 +20,11 @@ Na raiz do projeto, execute:
 python scripts/build_shell_selection.py
 ```
 
-Requer Python, Pillow e as fontes DejaVu Sans. O caminho das fontes está definido em `FONT` no script.
+Requer Python, Pillow, Matplotlib e as fontes DejaVu Sans. O caminho das fontes está definido em `FONT` no script.
+
+Os nove slides de resultados de Shell substituem as tabelas por gráficos, nesta ordem: três de tempo, três de comparações e três de movimentações. Cada bloco mostra entrada aleatória, crescente e decrescente, comparando Metades, Knuth e Ciura fixo. Os gráficos usam os CSVs originais, com escalas logarítmicas e o estilo visual da apresentação.
+
+Na parte de Shell, há um slide de vantagens e desvantagens e, após os gráficos, a conclusão sobre a escolha dos gaps. Após Selection, seis slides apresentam a comparação com Shell por metades e a conclusão dos dois algoritmos. Os dados e o texto vêm das seções 4 e 7 de `Trabalho_PAA1 (2).pdf` (páginas impressas 27–33). `dados/selection_tempos_relatorio.csv` transcreve os 30 tempos de Selection dessas tabelas. A comparação não inclui Knuth nem Ciura. A bibliografia permanece no final.
 
 ## Hospedar no Nginx existente
 
