@@ -167,6 +167,19 @@ for seq in ['metades','knuth','ciura']:
     assert len(datasets[seq])==30
     assert all(r['validacao']=='OK' for r in datasets[seq])
 def integer(s):return f'{int(s):,}'.replace(',','.')
+
+def result_table(title,subtitle,headers,rows,footnote,part='Shell Sort'):
+    new(title,subtitle)
+    cols=[105,530,960,1390] if len(headers)==4 else [105,650,1220]
+    for x,heading in zip(cols,headers):text(x+12,281,heading,32,True,TEAL)
+    assert len(rows)==10
+    for i,row in enumerate(rows):
+        y=344+i*48
+        if i%2==0:d.rectangle((105,y-4,1800,y+43),fill='white')
+        for x,value in zip(cols,row):text(x+12,y,value,30)
+    text(105,880,'Uma medição por combinação. Tempos e contagens não são médias.',29,False,MUTED)
+    if footnote:text(105,938,footnote,29,False,MUTED)
+    save(title);slides[-1]['part']=part
 types={'aleatorio':'entrada aleatória','crescente':'entrada crescente','decrescente':'entrada decrescente'}
 metrics=[('tempo','segundos_ordenacao','Tempo','Tempo (s)'),
          ('comparacoes','comparacoes','Comparações','Número de comparações'),
@@ -207,6 +220,17 @@ for slug,metric,label,ylabel in metrics:
         if metric=='movimentacoes':text(105,972,'Escritas no vetor, incluindo a gravação final do temporário.',27,False,MUTED)
         elif kind=='decrescente':text(105,972,'Entrada decrescente não é, automaticamente, o pior caso matemático.',27,False,MUTED)
         save(title)
+        ns=sorted(int(r['n']) for r in datasets['metades'] if r['tipo']==kind)
+        table_rows=[]
+        for n in ns:
+            values=[integer(n)]
+            for seq in ['metades','knuth','ciura']:
+                row=next(r for r in datasets[seq] if r['tipo']==kind and int(r['n'])==n)
+                values.append(row[metric] if metric=='segundos_ordenacao' else integer(row[metric]))
+            table_rows.append(values)
+        result_table('Tabela: '+label.lower()+' — '+kindname,
+                     'SHELL SORT • '+ylabel.upper(),['n','Metades','Knuth','Ciura fixo'],table_rows,
+                     'Movimentações incluem a gravação final do temporário.' if metric=='movimentacoes' else '')
 
 new('Conclusão: a escolha dos gaps','NENHUMA SEQUÊNCIA VENCEU TODOS OS CENÁRIOS')
 for y,title,body in [
@@ -279,6 +303,12 @@ for kind,kindname in types.items():
     text(105,921,f'Selection: {a}     Shell por metades: {b}',35,True,TEAL)
     text(105,979,'Escalas logarítmicas. Medições individuais do relatório, sem médias.',26,False,MUTED)
     save('Comparação de tempos — '+kindname);slides[-1]['part']='Comparação'
+    table_rows=[]
+    for row in sorted([r for r in selection_times if r['tipo']==kind],key=lambda r:int(r['n'])):
+        shell_row=next(r for r in datasets['metades'] if r['tipo']==kind and r['n']==row['n'])
+        table_rows.append([integer(row['n']),row['segundos_ordenacao'],shell_row['segundos_ordenacao']])
+    result_table('Tabela de tempos — '+kindname,'SELECTION × SHELL POR METADES • TEMPO EM SEGUNDOS',
+                 ['n','Selection Sort','Shell por metades'],table_rows,'','Comparação')
 
 new('Menos escritas não garantem menor tempo','10 MILHÕES DE ELEMENTOS • ENTRADA ALEATÓRIA')
 for x,title,comp,moves in [
