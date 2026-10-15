@@ -1,0 +1,9 @@
+# Arquivos gerados novamente pelo script
+/build/
+/distribuicao/
+__pycache__/
+*.pyc
+
+# Metadados locais da versão anterior e da hospedagem
+/historico/selection-sort/.git/
+/historico/selection-sort/.openai/
