@@ -11,9 +11,10 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 
 source = (ROOT / 'Shell_e_Selection_Sort.html').read_text(encoding='utf-8')
-data = source.split('const slides=', 1)[1]
+support = '--apoio' in sys.argv
+data = source.split('const supportSlides=' if support else 'const slides=', 1)[1]
 slides, _ = json.JSONDecoder().raw_decode(data)
-output = ROOT / 'output/pdf/Shell_e_Selection_Sort.pdf'
+output = ROOT / ('output/pdf/Shell_e_Selection_Sort_Apoio.pdf' if support else 'output/pdf/Shell_e_Selection_Sort.pdf')
 output.parent.mkdir(parents=True, exist_ok=True)
 width, height = 960, 540
 pdf = canvas.Canvas(str(output), pagesize=(width, height), pageCompression=1)
@@ -31,7 +32,11 @@ for index, slide in enumerate(slides, 1):
         rect = (x, y, x + link['w'] / 100 * width, y + link['h'] / 100 * height)
         target = link['target']
         if isinstance(target, int):
-            pdf.linkAbsolute(link['label'], f'slide-{target}', Rect=rect, thickness=0)
+            if link.get('view','main') != ('support' if support else 'main'):
+                other = 'Shell_e_Selection_Sort.pdf' if support else 'Shell_e_Selection_Sort_Apoio.pdf'
+                pdf.linkURL(f'{other}#page={target}', rect, relative=1, thickness=0)
+            else:
+                pdf.linkAbsolute(link['label'], f'slide-{target}', Rect=rect, thickness=0)
         else:
             pdf.linkURL(target, rect, relative=0, thickness=0)
     pdf.showPage()
