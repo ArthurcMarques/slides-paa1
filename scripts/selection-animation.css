@@ -4,7 +4,7 @@
 #selection-message{font-size:1.4cqw;line-height:1.45;min-height:4.2cqw;margin-top:1cqw;font-weight:700}
 #selection-counts{font-size:1.1cqw;color:#52616a}
 #selection-play{background:#008780;color:white}
-#selection-indices{display:grid;grid-template-columns:repeat(5,1fr);gap:.3cqw}
+#selection-indices{display:grid;grid-template-columns:repeat(8,1fr);gap:.3cqw}
 #selection-indices span{text-align:center;font-size:1.15cqw;padding:.45cqw .2cqw;background:#f5f4ef;border:1px solid #d1d9d8;border-radius:.2cqw}
 #selection-indices .insert-index{background:#dbe9f6;color:#154c77;font-weight:bold;border-color:#6595bf}
 #selection-indices .previous-index{background:#f2e6c9;color:#75500e;border-color:#d9bc79}

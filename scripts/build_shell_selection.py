@@ -247,6 +247,26 @@ original=json.loads(raw.removeprefix('const slides = ').removesuffix(';'))
 assert len(original)==27
 selection_numbers=[i for i in range(1,28) if not 9<=i<=14]
 selection_count=len(selection_numbers)
+selection_content={
+1:('Selection Sort','SELECIONAR O MENOR • TROCAR • REPETIR', [('Ideia principal','Encontrar o menor valor da parte restante.'),('A cada rodada','Colocar esse valor na próxima posição livre.'),('Resultado','A parte ordenada cresce uma posição por vez.')]),
+2:('História do Selection Sort','MÉTODOS DE SELEÇÃO NOS PRIMEIROS COMPUTADORES', [('Anos 1950','Já existiam estudos sobre ordenação por seleção.'),('1956 e 1958','Demuth, Friend e Bell estudaram métodos de ordenação.'),('O que lembrar','Não há um inventor comprovado da versão atual.')]),
+3:('Selection: registros históricos','1956 • HOWARD B. DEMUTH', [('Estudo em Stanford','Seu doutorado tratou de formas de ordenar dados.'),('Relação com Selection','O trabalho descreve uma técnica relacionada à seleção.'),('Cuidado com a atribuição','Um registro antigo não prova quem inventou o algoritmo.')]),
+4:('Selection: outros estudos','1956 E 1958', [('Edward H. Friend • 1956','Publicou um estudo sobre ordenação em computadores.'),('D. A. Bell • 1958','Também apresentou métodos de ordenação.'),('Métodos relacionados','As versões estudadas não eram todas iguais à atual.')]),
+5:('Selection nos livros e nas aulas','UM ALGORITMO CLÁSSICO PARA APRENDER ORDENAÇÃO', [('Knuth • 1973','Publicou o volume sobre ordenação e busca.'),('Edição de 1998','O livro inclui ordenação por seleção.'),('MIT • 2000','Selection aparece em aulas de programação.')]),
+6:('Selection: resumo da história','O QUE VALE LEMBRAR', [('Origem','Métodos de seleção já eram estudados nos anos 1950.'),('Difusão','O algoritmo passou a aparecer em livros e cursos.'),('Autoria','Não atribuímos um inventor único ao Selection Sort.')]),
+7:('Como funciona o Selection Sort?','BUSCAR • GUARDAR A POSIÇÃO • TROCAR', [('1 • Procurar','Percorrer a parte ainda não ordenada e achar o menor.'),('2 • Trocar','Colocar o menor no início dessa parte.'),('3 • Repetir','Avançar uma posição e fazer uma nova busca.')]),
+15:('Selection: a ideia central','UMA POSIÇÃO DEFINIDA POR RODADA', [('Busca','Guardar o índice do menor valor encontrado.'),('Troca','Trocar somente depois de terminar a busca.'),('Parte ordenada','As posições já definidas ficam prontas.')]),
+16:('Selection no nosso trabalho','ARQUIVOS DE ENTRADA • ORDENAÇÃO • MEDIÇÃO', [('Entrada','O programa lê n inteiros de um arquivo.'),('Ordenação','A função selection_sort() reorganiza o vetor.'),('Registro','Salva tempo, comparações e movimentações.')]),
+17:('Selection: código em C','A MESMA LÓGICA DA ANIMAÇÃO', [('i e j','i define a posição; j percorre os valores restantes.'),('menor','Guarda a posição do menor valor encontrado.'),('Troca efetiva','Se menor for diferente de i, são feitas duas escritas.')]),
+18:('Selection: execução dos testes','DA LEITURA AO REGISTRO DOS RESULTADOS', [('Preparar','Localizar o arquivo, alocar o vetor e carregar os valores.'),('Executar','Medir o tempo da função de ordenação.'),('Finalizar','Registrar o resultado e liberar a memória.')]),
+19:('Selection: entradas dos testes','10 TAMANHOS • 3 TIPOS DE ENTRADA', [('Organizações','Entrada aleatória, entrada crescente e entrada decrescente.'),('Tamanhos','De 10 a 10.000.000 de elementos.'),('Medições','Uma execução por combinação: não são médias.')]),
+20:('Selection: o que contamos?','COMPARAÇÕES E ESCRITAS NO VETOR', [('Comparações','Cada comparação entre valores conta uma operação.'),('Movimentações','Uma troca efetiva conta duas escritas no vetor.'),('Exemplo com cinco valores','[64, 25, 12, 22, 11]: 10 comparações e 6 escritas.')]),
+21:('Selection: complexidade','A BUSCA CONTINUA MESMO COM A ENTRADA ORDENADA', [('Melhor caso','Θ(n²): ainda percorre toda a parte restante.'),('Pior caso','Θ(n²): a quantidade de comparações é a mesma.'),('Memória auxiliar','Θ(1): usa poucas variáveis para ordenar o vetor.')]),
+22:('Selection: crescimento do custo','AS COMPARAÇÕES CRESCEM RAPIDAMENTE', [('100 elementos','4.950 comparações.'),('1.000 elementos','499.500 comparações.'),('Ao multiplicar n por 10','O número de comparações aumenta cerca de 100 vezes.')]),
+23:('Selection: estabilidade e memória','A VERSÃO COM TROCA DIRETA NÃO É ESTÁVEL', [('Valores iguais podem inverter a ordem','[2A, 2B, 1] → [1, 2B, 2A] após a primeira troca.'),('Memória auxiliar constante','A ordenação usa Θ(1) de espaço extra.'),('Poucas trocas','No máximo n − 1 trocas efetivas.')]),
+25:('Selection: medição de desempenho','TEMPO SOMENTE DA ORDENAÇÃO', [('Cronômetro','clock_gettime() com relógio monotônico.'),('Trecho medido','Somente a chamada de selection_sort().'),('Resultados individuais','Cada combinação tem uma medição, sem calcular médias.')]),
+26:('Selection: resultados dos testes','10 MILHÕES DE ELEMENTOS • ENTRADA ALEATÓRIA', [('Tempo','107.310,582 segundos: aproximadamente 29 h e 49 min.'),('Comparações','49.999.995.000.000 comparações entre valores.'),('Leitura do resultado','O custo quadrático pesa muito nas entradas grandes.')]),
+27:('Conclusão: Selection Sort','SIMPLES, MAS CUSTOSO EM VETORES GRANDES', [('Comparações','A quantidade depende do tamanho, não da ordem inicial.'),('Movimentações','Dependem das trocas necessárias para aquela entrada.'),('Uso prático','É fácil de implementar, mas não escala bem.')])}
 selection_targets={i:offset+selection_numbers.index(i)+1 for i in selection_numbers}
 for i in range(9,15):selection_targets[i]=selection_targets[8]
 for i,s in enumerate(original,1):
@@ -255,11 +275,11 @@ for i,s in enumerate(original,1):
         l['target']=1 if i==27 and l['label']=='Início' else selection_targets[l['target']]
     if i==8:
         new('Selection Sort: execução passo a passo','BUSCAR O MENOR • TROCAR • REPETIR')
-        for y,label,values in [(355,'Entrada',[64,25,12,22,11]),(600,'Resultado',[11,12,22,25,64])]:
+        for y,label,values in [(355,'Entrada',[8,3,7,4,6,2,5,1]),(600,'Resultado',[1,2,3,4,5,6,7,8])]:
             text(105,y-55,label,34,True,TEAL)
             for k,value in enumerate(values):
-                x=105+k*162;box((x,y,x+145,y+110),PALE)
-                d.text((x+72,y+55),str(value),anchor='mm',font=font(40,True),fill=INK)
+                x=105+k*101;box((x,y,x+88,y+110),PALE)
+                d.text((x+44,y+55),str(value),anchor='mm',font=font(42,True),fill=INK)
             textlog.append(label+': '+', '.join(map(str,values)))
         source=(ROOT/'scripts/selection-animation.js').read_text(encoding='utf-8')
         lines=ast.literal_eval('['+source.split('const selectionCode=[',1)[1].split('\n];',1)[0]+']')
@@ -270,9 +290,64 @@ for i,s in enumerate(original,1):
         save('Selection Sort: execução animada com código')
         slides[-1]['part']='Selection Sort';slides[-1]['animation']='selection'
         continue
-    s['part']='Selection Sort'
-    s['image']='data:image/png;base64,'+base64.b64encode((ROOT/f'historico/selection-sort/dist/slides/Slide{i}.PNG').read_bytes()).decode()
-    slides.append(s)
+    if i==2:
+        new('História do Selection Sort','MÉTODOS DE SELEÇÃO NOS PRIMEIROS COMPUTADORES')
+        for y,year,name,body in [
+            (290,'1956','Howard B. Demuth','Estudou métodos de ordenação\nem seu doutorado em Stanford.'),
+            (480,'1956','Edward H. Friend','Publicou um estudo sobre\nordenação em computadores.'),
+            (670,'1958','D. A. Bell','Também apresentou métodos\nrelacionados à ordenação.')]:
+            text(106,y,year,52,True,TEAL);text(440,y,name,43,True);text(440,y+64,body,36)
+        note('São registros históricos; não há um inventor único comprovado.')
+        save('História do Selection Sort')
+    elif i==7:
+        new('Como funciona o Selection Sort','ENCONTRA O MENOR VALOR DA PARTE RESTANTE')
+        for y,num,title,body in [
+            (295,'1','Procurar o menor','Percorrer a parte ainda não ordenada e guardar o índice do menor.'),
+            (475,'2','Colocar na posição','Trocar o menor com o início da parte ainda não ordenada.'),
+            (655,'3','Avançar e repetir','A próxima busca começa uma posição à frente.')]:
+            text(106,y,num,58,True,TEAL);text(245,y,title,43,True);text(245,y+70,body,35)
+        note('A parte ordenada cresce uma posição a cada rodada.')
+        save('Como funciona o Selection Sort')
+    elif i==21:
+        new('Complexidade do Selection Sort','MELHOR E PIOR CASO DA VERSÃO COM TROCA DIRETA')
+        for x,label in zip([110,820,1320],['Algoritmo','Melhor caso','Pior caso']):text(x,296,label,36,True,TEAL)
+        box((105,378,1800,480),'white')
+        for x,label in zip([125,835,1335],['Selection Sort','Θ(n²)','Θ(n²)']):text(x,405,label,40,x==125)
+        box((105,535,1800,725),PALE)
+        text(142,565,'Mesmo com a entrada já ordenada',40,True,TEAL)
+        text(142,635,'O algoritmo continua procurando o menor em toda a parte restante.',35)
+        text(104,826,'A ordem inicial não muda a quantidade de comparações.',36)
+        text(104,882,'Memória auxiliar da ordenação: Θ(1).',36)
+        save('Selection Sort: complexidade')
+    elif i==23:
+        new('Selection Sort é estável?','NÃO GARANTE A ORDEM ORIGINAL DOS VALORES IGUAIS')
+        text(105,279,'2A e 2B têm o mesmo valor. As letras identificam cada elemento.',35)
+        for y,label,values in [(365,'Entrada',['2A','2B','1']),(535,'Após a troca',['1','2B','2A']),(705,'Resultado',['1','2B','2A'])]:
+            text(105,y+32,label,37,True,TEAL)
+            for j,value in enumerate(values):
+                x=565+j*285;box((x,y,x+235,y+116),PALE if value in ['2A','2B'] else 'white')
+                d.text((x+117,y+57),value,anchor='mm',font=font(48,True),fill=INK)
+            textlog.append(label+': '+', '.join(values))
+        text(105,873,'A troca colocou 2A depois de 2B.',37,True)
+        text(105,940,'A versão com troca direta não preserva a ordem dos iguais.',31,False,MUTED)
+        save('Estabilidade: Selection Sort não é estável')
+    elif i==24:
+        new('Selection: vantagens e desvantagens','POUCAS TROCAS, MAS MUITAS COMPARAÇÕES')
+        for x,heading,items in [(105,'Vantagens',['Código curto e simples.','Memória auxiliar Θ(1).','No máximo n − 1 trocas.']),
+                                (970,'Desvantagens',['Θ(n²) em todos os casos.','Não é estável.','Lento em vetores grandes.'])]:
+            box((x,300,x+825,845),PALE if x==105 else 'white')
+            text(x+40,340,heading,45,True,TEAL)
+            for y,item in zip([440,550,680],items):text(x+40,y,item,35)
+        note('Fazer poucas trocas não elimina o custo de procurar o menor.')
+        save('Selection Sort: vantagens e desvantagens')
+    else:
+        title,subtitle,items=selection_content[i]
+        new(title,subtitle)
+        for y,(heading,body) in zip([300,495,690],items):
+            text(105,y,heading,39,True,TEAL)
+            text(105,y+70,body,33)
+        save(title)
+    slides[-1]['part']='Selection Sort'
 
 comparison_start=len(slides)+1
 new('Computador utilizado nos testes','DELL OPTIPLEX 3060')
@@ -379,18 +454,21 @@ comparison_count=len(slides)-(comparison_start-1)
 
 new('Bibliografia do Shell Sort','REFERÊNCIAS • ALGORITMO E SEQUÊNCIAS DE GAPS')
 sources=[
- ('Donald E. Knuth','The Art of Computer Programming, volume 3: Sorting and Searching.','https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/Shell.html'),
- ('Marcin Ciura (2001)','Estudo experimental de sequências de gaps.','https://doi.org/10.1007/3-540-44669-9_12'),
- ('Robert Sedgewick (1986 e 1996)','Limites e referências para outras sequências.','https://sedgewick.io/wp-content/themes/sedgewick/papers/1986Shellsort.pdf')]
+ ('KNUTH, Donald E.','The Art of Computer Programming, v. 3: Sorting and Searching.','https://www-cs-faculty.stanford.edu/~knuth/taocp.html'),
+ ('CIURA, Marcin (2001)','Best Increments for the Average Case of Shellsort.','https://doi.org/10.1007/3-540-44669-9_12'),
+ ('SEDGEWICK, Robert (1986 e 1996)','Sequências de gaps e limites de complexidade.','https://sedgewick.io/wp-content/themes/sedgewick/papers/1986Shellsort.pdf'),
+ ('VITÁNYI, Paul (2018)','On the average-case complexity of Shellsort. DOI: 10.1002/rsa.20737.','https://doi.org/10.1002/rsa.20737'),
+ ('JIANG, Tao; LI, Ming; VITÁNYI, Paul (1999)','A Lower Bound on the Average-Case Complexity of Shellsort.','https://arxiv.org/abs/cs/9906008'),
+ ('POONEN, Bjorn (1993)','The Worst Case in Shellsort and Related Algorithms.','https://math.mit.edu/~poonen/papers/shell.pdf')]
 links=[]
 for i,(name,desc,url) in enumerate(sources):
-    y=285+i*165;text(105,y,name,38,True,TEAL);text(105,y+58,desc,30)
-    links.append(dict(x=5.4,y=y/10.8,w=88,h=11,target=url,label=name))
-text(105,805,'Resultados: shell_metades, shell_knuth e shell_ciura (CSV).',31)
-text(105,864,'Uma medição por combinação. Sem execução nova nem médias.',31)
-text(105,923,'Comparação e conclusão: relatório do trabalho, seções 4 e 7.',29,False,MUTED)
-links.append(dict(x=5.4,y=68.5,w=88,h=4,target='https://sedgewick.io/wp-content/themes/sedgewick/papers/1996Shellsort.pdf',label='Sedgewick — estudo de 1996'))
-text(105,744,'Abrir também o estudo de 1996',26,False,TEAL)
+    y=275+i*107
+    text(105,y,name,32,True,TEAL);text(105,y+45,desc,28)
+    links.append(dict(x=5.4,y=y/10.8,w=88,h=9,target=url,label=name))
+text(105,930,'Sedgewick: estudo de 1996',25,False,TEAL)
+links.append(dict(x=5.4,y=86,w=34,h=4,target='https://sedgewick.io/wp-content/themes/sedgewick/papers/1996Shellsort.pdf',label='Sedgewick (1996)'))
+text(850,930,'Princeton: implementação de Shell',25,False,TEAL)
+links.append(dict(x=44,y=86,w=45,h=4,target='https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/Shell.html',label='Princeton: Shell'))
 save('Bibliografia do Shell Sort',links)
 slides[-1]['part']='Bibliografia'
 
@@ -458,8 +536,34 @@ for y,authors,title,venue,label,url in references:
 text(1470,425,'PDF no CWI',26,False,TEAL)
 links.append(dict(x=76,y=39,w=17,h=4,target='https://ir.cwi.nl/pub/27188/Vit-nyi-2017-Random_Structures_-_Algorithms.pdf',label='Vitányi: PDF no CWI'))
 save('Fontes da análise matemática do Shell Sort',links);slides[-1]['part']='Bibliografia'
+new('Bibliografia do Selection Sort','HISTÓRIA • FUNCIONAMENTO • ANÁLISE')
+links=[]
+for y,author,description,label,url in [
+    (285,'BEADLE, Alan (2021)',
+     'Historical Origins of Data Structures and Algorithms, p. 24.',
+     'University of Rochester • material da disciplina CSC 162',
+     'https://www.cs.rochester.edu/u/hbeadle/csc162/_static/lectures/ds_history.pdf'),
+    (450,'ASTRACHAN, Owen (2003)',
+     'Bubble Sort: An Archaeological Algorithmic Analysis.',
+     'SIGCSE • contexto histórico dos métodos de ordenação',
+     'https://scholars.duke.edu/publication/758385'),
+    (615,'KNUTH, Donald E. (1998)',
+     'The Art of Computer Programming, v. 3: Sorting and Searching.',
+     '2ª edição • seção 5.2.3: Sorting by Selection',
+     'https://www-cs-faculty.stanford.edu/~knuth/taocp.html'),
+    (780,'SEDGEWICK, Robert; WAYNE, Kevin',
+     'Algorithms, 4th edition: documentação da classe Selection.',
+     'Princeton • implementação e análise do Selection Sort',
+     'https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/Selection.html')]:
+    text(105,y,author,35,True,TEAL)
+    text(105,y+51,description,31)
+    text(105,y+99,label,28,False,MUTED)
+    links.append(dict(x=5.4,y=y/10.8,w=88,h=13,target=url,label=author))
+save('Bibliografia do Selection Sort',links);slides[-1]['part']='Bibliografia'
 full_slides=slides[:]
-main_numbers=[1,2,3,4,5,61,6,7,62,9,10,12,14,28,34,36,43,45,46,50,51,52,54,56,58,59,60,63]
+# A bibliografia de análise do Shell foi reunida no slide de fontes do algoritmo.
+full_slides.pop(62)
+main_numbers=[1,2,3,4,5,61,6,7,62,9,10,12,14,28,30,35,36,43,45,46,50,51,52,54,56,58,59,60,63]
 assert len(full_slides)==63
 support_numbers=[n for n in range(1,len(full_slides)+1) if n not in main_numbers]
 destinations={n:('main',main_numbers.index(n)+1) if n in main_numbers else ('support',support_numbers.index(n)+1) for n in range(1,len(full_slides)+1)}
@@ -542,10 +646,6 @@ with zipfile.ZipFile(ROOT/'distribuicao/site.zip','w',zipfile.ZIP_DEFLATED) as z
     z.write(site_dir/'index.html','index.html')
 assert len(full_slides)==offset+selection_count+4+comparison_count
 assert all(1<=l['target']<=(len(support_slides) if l['view']=='support' else len(slides)) for s in full_slides for l in s['links'] if isinstance(l['target'],int))
-# Check that all original slide bytes, titles and text remain unchanged.
-for number,s in zip(selection_numbers,full_slides[offset:offset+selection_count]):
-    if number==8:continue
-    assert s['text']==original[number-1]['text']
-    assert s['title']==original[number-1]['title']
+assert all(s['part']=='Selection Sort' for s in full_slides[offset:offset+selection_count])
 print(f'{len(slides)} slides principais + {len(support_slides)} de apoio. Links validados.')
 print(dest)

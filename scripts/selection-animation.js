@@ -36,7 +36,7 @@ function selectionTrace(input){
  }
  i=j=menor=tmp=null;done=a.length;emit(-1,'Vetor ordenado. O último elemento também está na posição correta.');return steps;
 }
-const selectionSteps=selectionTrace([64,25,12,22,11]);
+const selectionSteps=selectionTrace([8,3,7,4,6,2,5,1]);
 let selectionPosition=0,selectionTimer=null;
 function stopSelection(){if(selectionTimer!==null)clearInterval(selectionTimer);selectionTimer=null;const button=document.querySelector('#selection-play');if(button)button.textContent='Reproduzir'}
 function showSelection(){
@@ -65,6 +65,8 @@ function showSelection(){
 function mountSelection(){
  const panel=document.createElement('section');panel.id='shell-animation';panel.dataset.animation='selection';panel.setAttribute('aria-label','Execução animada do Selection Sort');
  panel.innerHTML=`<h1>Selection Sort: execução passo a passo</h1><p class="shell-sub">BUSCAR O MENOR · TROCAR · AVANÇAR A PARTE ORDENADA</p><div class="shell-layout"><div><div id="selection-vars"></div><div class="shell-cells"></div><p class="shell-key">Verde claro: posição definida · Dourado: menor · Azul: leitura · Verde: escrita</p><div class="shell-positions"><div id="selection-indices"></div><p class="position-key">Azul: posição i · Dourado: parte restante · Contorno: índice j</p><p class="position-order">Ordem da busca nesta rodada: <strong id="selection-order"></strong></p></div><div id="selection-message" aria-live="polite"></div><p id="selection-counts"></p></div><div class="shell-code"></div></div><div class="shell-controls"><button id="selection-reset">Reiniciar</button><button id="selection-prev">Passo anterior</button><button id="selection-play">Reproduzir</button><button id="selection-next">Próximo passo</button><label>Velocidade <select id="selection-speed"><option value="1200">Lenta</option><option value="700" selected>Normal</option><option value="250">Rápida</option></select></label><span id="selection-progress"></span></div><div class="shell-jumps">Ir para a rodada: <button data-round="0">1ª</button><button data-round="1">2ª</button><button data-round="2">3ª</button><button data-round="3">4ª</button></div>`;
+ const jumps=panel.querySelector('.shell-jumps');jumps.textContent='Ir para a rodada: ';
+ for(let round=0;round<selectionSteps[0].a.length-1;round++){const button=document.createElement('button');button.dataset.round=round;button.textContent=`${round+1}ª`;jumps.append(button)}
  const code=panel.querySelector('.shell-code');selectionCode.forEach((line,k)=>{const row=document.createElement('div');row.className='code-line';const number=document.createElement('span');number.textContent=String(k+1).padStart(2,'0');const source=document.createElement('code');source.textContent=line;row.append(number,source);code.append(row)});
  document.querySelector('#slide').append(panel);
  panel.querySelector('#selection-reset').onclick=()=>{stopSelection();selectionPosition=0;showSelection()};
