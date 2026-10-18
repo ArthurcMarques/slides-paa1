@@ -1,4 +1,4 @@
-import base64, csv, html, io, json, re, zipfile
+import ast, base64, csv, html, io, json, re, zipfile
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 import matplotlib
@@ -95,24 +95,23 @@ def array_row(y,label,values,gap):
         d.text((x+65,y+57),str(value),anchor='mm',font=font(49,True),fill=INK)
         d.text((x+65,y+145),str(j),anchor='mm',font=font(25),fill=MUTED)
 
-examples=[
-    (4,[8,3,7,4,6,2,5,1],[6,2,5,1,8,3,7,4],
-     'Grupos de posições: (0, 4), (1, 5), (2, 6) e (3, 7).',
-     'No primeiro grupo, 8 e 6 viram 6 e 8. Os outros seguem a mesma ideia.'),
-    (2,[6,2,5,1,8,3,7,4],[5,1,6,2,7,3,8,4],
-     'Agora os grupos são as posições (0, 2, 4, 6) e (1, 3, 5, 7).',
-     'Os grupos [6, 5, 8, 7] e [2, 1, 3, 4] ficam ordenados separadamente.'),
-    (1,[5,1,6,2,7,3,8,4],[1,2,3,4,5,6,7,8],
-     'Com gap 1, todas as posições formam um único grupo.',
-     'A inserção encaixa cada valor entre os anteriores. O vetor fica ordenado.')]
-for gap,before,after,explain,detail in examples:
-    new(f'Exemplo: passagem com gap {gap}','OITO ELEMENTOS • GAPS POR METADES: 4, 2 E 1')
-    array_row(315,'Antes',before,gap)
-    array_row(560,'Depois',after,gap)
-    text(104,795,explain,34)
-    text(104,858,detail,32)
-    note('Mesma cor = mesmo grupo. Os números abaixo indicam as posições.')
-    save(f'Exemplo de funcionamento: gap {gap}')
+new('Shell Sort: execução passo a passo','GAPS POR METADES • 4, 2 E 1')
+for y,label,values in [(360,'Entrada',[8,3,7,4,6,2,5,1]),(600,'Resultado',[1,2,3,4,5,6,7,8])]:
+    text(105,y-60,label,35,True,TEAL)
+    for k,value in enumerate(values):
+        x=105+k*101;box((x,y,x+88,y+110),PALE)
+        d.text((x+44,y+55),str(value),anchor='mm',font=font(42,True),fill=INK)
+    textlog.append(label+': '+', '.join(map(str,values)))
+code_source=(ROOT/'scripts/shell-animation.js').read_text(encoding='utf-8')
+code_lines=ast.literal_eval('['+code_source.split('const shellCode = [',1)[1].split('\n];',1)[0]+']')
+box((970,295,1810,790))
+for k,line in enumerate(code_lines):
+    d.text((990,320+k*39),line,font=ImageFont.truetype(str(FONT/'DejaVuSansMono.ttf'),23),fill=INK)
+textlog.append('\n'.join(code_lines))
+text(105,845,'Na web: reproduza, pause e avance com a linha do código destacada.',32)
+note('O PDF contém este resumo estático. A execução animada está no HTML.')
+save('Shell Sort: execução animada com código')
+slides[-1]['animation']='shell'
 
 new('Shell Sort é estável?','NÃO GARANTE A ORDEM ORIGINAL DOS VALORES IGUAIS')
 text(105,279,'2A e 2B têm o mesmo valor. As letras identificam cada elemento.',35)
@@ -246,9 +245,31 @@ offset=len(slides)
 raw=(ROOT/'historico/selection-sort/dist/data.js').read_text(encoding='utf-8')
 original=json.loads(raw.removeprefix('const slides = ').removesuffix(';'))
 assert len(original)==27
+selection_numbers=[i for i in range(1,28) if not 9<=i<=14]
+selection_count=len(selection_numbers)
+selection_targets={i:offset+selection_numbers.index(i)+1 for i in selection_numbers}
+for i in range(9,15):selection_targets[i]=selection_targets[8]
 for i,s in enumerate(original,1):
+    if i not in selection_numbers:continue
     for l in s['links']:
-        l['target']=1 if i==27 and l['label']=='Início' else l['target']+offset
+        l['target']=1 if i==27 and l['label']=='Início' else selection_targets[l['target']]
+    if i==8:
+        new('Selection Sort: execução passo a passo','BUSCAR O MENOR • TROCAR • REPETIR')
+        for y,label,values in [(355,'Entrada',[64,25,12,22,11]),(600,'Resultado',[11,12,22,25,64])]:
+            text(105,y-55,label,34,True,TEAL)
+            for k,value in enumerate(values):
+                x=105+k*162;box((x,y,x+145,y+110),PALE)
+                d.text((x+72,y+55),str(value),anchor='mm',font=font(40,True),fill=INK)
+            textlog.append(label+': '+', '.join(map(str,values)))
+        source=(ROOT/'scripts/selection-animation.js').read_text(encoding='utf-8')
+        lines=ast.literal_eval('['+source.split('const selectionCode=[',1)[1].split('\n];',1)[0]+']')
+        box((970,285,1810,815))
+        for k,line in enumerate(lines):d.text((990,305+k*37),line,font=ImageFont.truetype(str(FONT/'DejaVuSansMono.ttf'),23),fill=INK)
+        textlog.append('\n'.join(lines))
+        note('Na web: vetor, código e índices animados. No PDF: resumo estático.')
+        save('Selection Sort: execução animada com código')
+        slides[-1]['part']='Selection Sort';slides[-1]['animation']='selection'
+        continue
     s['part']='Selection Sort'
     s['image']='data:image/png;base64,'+base64.b64encode((ROOT/f'historico/selection-sort/dist/slides/Slide{i}.PNG').read_bytes()).decode()
     slides.append(s)
@@ -356,7 +377,7 @@ save('Conclusão: comparação dos algoritmos');slides[-1]['part']='Conclusão'
 
 comparison_count=len(slides)-(comparison_start-1)
 
-new('Bibliografia do Shell Sort','REFERÊNCIAS')
+new('Bibliografia do Shell Sort','REFERÊNCIAS • ALGORITMO E SEQUÊNCIAS DE GAPS')
 sources=[
  ('Donald E. Knuth','The Art of Computer Programming, volume 3: Sorting and Searching.','https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/Shell.html'),
  ('Marcin Ciura (2001)','Estudo experimental de sequências de gaps.','https://doi.org/10.1007/3-540-44669-9_12'),
@@ -373,35 +394,145 @@ text(105,744,'Abrir também o estudo de 1996',26,False,TEAL)
 save('Bibliografia do Shell Sort',links)
 slides[-1]['part']='Bibliografia'
 
+# Sequência principal curta; todo o conteúdo restante continua no material de apoio.
+new('Shell Sort: por subsequências','OUTRA FORMA DE PERCORRER OS GRUPOS DO MESMO GAP')
+text(105,285,'Gap 4: cada linha é um grupo.',32,True,TEAL)
+for r,values in enumerate([[8,6],[3,2],[7,5],[4,1]]):
+    y=365+r*115;text(105,y+22,f'Grupo {r}',31,True,TEAL)
+    for k,value in enumerate(values):
+        x=320+k*240;box((x,y,x+195,y+90),['#D6EEE7','#E6EAF6','#F1E6D4','#EADFEA'][r])
+        d.text((x+98,y+30),str(value),anchor='mm',font=font(35,True),fill=INK)
+        d.text((x+98,y+68),f'índice {r+k*4}',anchor='mm',font=font(22),fill=MUTED)
+source=(ROOT/'scripts/subsequence-animation.js').read_text(encoding='utf-8')
+lines=ast.literal_eval('['+source.split('const subsequenceCode=[',1)[1].split('\n];',1)[0]+']')
+box((970,285,1810,815))
+for k,line in enumerate(lines):d.text((990,305+k*37),line,font=ImageFont.truetype(str(FONT/'DejaVuSansMono.ttf'),23),fill=INK)
+textlog.append('\n'.join(lines))
+text(105,865,'Ordenamos um grupo inteiro antes de passar para o próximo.',32)
+note('Na web: inserção animada em cada grupo, com os índices do vetor original.')
+save('Shell Sort: animação por subsequências');slides[-1]['animation']='subsequences'
+new('Por que a análise do Shell é difícil?','EXISTEM PROVAS, MAS NEM TODOS OS CASOS ESTÃO RESOLVIDOS')
+for y,num,title,body in [
+    (275,'1','As passagens dependem umas das outras',
+     'Cada gap reorganiza o vetor e muda o trabalho da passagem seguinte.'),
+    (410,'2','A sequência de gaps faz diferença',
+     'Já existem provas de melhor e pior caso para várias sequências.'),
+    (545,'3','O caso médio ainda traz desafios',
+     'Ainda faltam limites precisos para várias sequências usadas na prática.')]:
+    text(105,y,num,48,True,TEAL);text(220,y,title,36,True);text(220,y+57,body,30)
+box((105,690,1800,975),PALE)
+text(140,712,'Poonen (1993): limite inferior do pior caso',35,True,TEAL)
+formula_font=font(40)
+formula_left='Ω(n ('
+fraction_x=140+d.textlength(formula_left,font=formula_font)+10
+fraction_width=d.textlength('log log n',font=formula_font)+16
+d.text((140,781),formula_left,font=formula_font,fill=INK)
+for formula_y,formula_label in [(755,'log n'),(806,'log log n')]:
+    formula_width=d.textlength(formula_label,font=formula_font)
+    d.text((fraction_x+(fraction_width-formula_width)/2,formula_y),formula_label,font=formula_font,fill=INK)
+d.line((fraction_x,803,fraction_x+fraction_width,803),fill=INK,width=2)
+d.text((fraction_x+fraction_width+10,781),')²)',font=formula_font,fill=INK)
+textlog.append('Ω(n (log n / log log n)²)')
+text(140,860,'Para qualquer sequência de gaps, existe uma entrada que exige pelo menos essa ordem de operações.',29)
+text(140,902,'Logo, o Shell convencional não pode garantir pior caso O(n log n).',32,True)
+save('Shell Sort: dificuldade da análise matemática')
+new('Fontes: análise do Shell Sort','REFERÊNCIAS • CASO MÉDIO E PIOR CASO')
+links=[]
+references=[
+    (285,'VITÁNYI, Paul (2018)',
+     'On the average-case complexity of Shellsort.',
+     'Random Structures & Algorithms, v. 52, n. 2, p. 354–363.',
+     'DOI: 10.1002/rsa.20737','https://doi.org/10.1002/rsa.20737'),
+    (505,'JIANG, Tao; LI, Ming; VITÁNYI, Paul',
+     'A Lower Bound on the Average-Case Complexity of Shellsort.',
+     'arXiv:cs/9906008 (1999); publicado no JACM em 2000.',
+     'arxiv.org/abs/cs/9906008','https://arxiv.org/abs/cs/9906008'),
+    (725,'POONEN, Bjorn (1993)',
+     'The Worst Case in Shellsort and Related Algorithms.',
+     'Journal of Algorithms, v. 15, n. 1, p. 101–124.',
+     'math.mit.edu/~poonen/papers/shell.pdf','https://math.mit.edu/~poonen/papers/shell.pdf')]
+for y,authors,title,venue,label,url in references:
+    text(105,y,authors,35,True,TEAL);text(105,y+52,title,31)
+    text(105,y+98,venue,27,False,MUTED);text(105,y+140,label,27,False,TEAL)
+    links.append(dict(x=5.4,y=y/10.8,w=83,h=16,target=url,label=authors))
+text(1470,425,'PDF no CWI',26,False,TEAL)
+links.append(dict(x=76,y=39,w=17,h=4,target='https://ir.cwi.nl/pub/27188/Vit-nyi-2017-Random_Structures_-_Algorithms.pdf',label='Vitányi: PDF no CWI'))
+save('Fontes da análise matemática do Shell Sort',links);slides[-1]['part']='Bibliografia'
+full_slides=slides[:]
+main_numbers=[1,2,3,4,5,61,6,7,62,9,10,12,14,28,34,36,43,45,46,50,51,52,54,56,58,59,60,63]
+assert len(full_slides)==63
+support_numbers=[n for n in range(1,len(full_slides)+1) if n not in main_numbers]
+destinations={n:('main',main_numbers.index(n)+1) if n in main_numbers else ('support',support_numbers.index(n)+1) for n in range(1,len(full_slides)+1)}
+for item in full_slides:
+    for link in item.get('links',[]):
+        if isinstance(link['target'],int):link['view'],link['target']=destinations[link['target']]
+slides=[full_slides[n-1] for n in main_numbers]
+support_slides=[full_slides[n-1] for n in support_numbers]
+for deck in [slides,support_slides]:
+    for number,item in enumerate(deck,1):
+        frame=Image.open(io.BytesIO(base64.b64decode(item['image'].split(',',1)[1]))).convert('RGB')
+        stamp=ImageDraw.Draw(frame);stamp.rectangle((1820,985,1900,1060),fill=BG)
+        stamp.text((1832,1002),f'{number:02}',font=font(26),fill=MUTED)
+        buffer=io.BytesIO();frame.save(buffer,format='PNG')
+        item['image']='data:image/png;base64,'+base64.b64encode(buffer.getvalue()).decode()
+
 css=(ROOT/'historico/selection-sort/dist/style.css').read_text(encoding='utf-8')
+css+=(ROOT/'scripts/shell-animation.css').read_text(encoding='utf-8')
+css+=(ROOT/'scripts/selection-animation.css').read_text(encoding='utf-8')
+css+=(ROOT/'scripts/subsequence-animation.css').read_text(encoding='utf-8')
+css+=(ROOT/'scripts/slide-visibility.css').read_text(encoding='utf-8')
+for face,bold in [('DejaVuSans.ttf',400),('DejaVuSans-Bold.ttf',700)]:
+    css+="@font-face{font-family:'DejaVu Sans';font-weight:"+str(bold)+";src:url(data:font/ttf;base64,"+base64.b64encode((FONT/face).read_bytes()).decode()+") format('truetype');}"
 css+='\n#chapter{max-width:22vw}nav{gap:8px}.hotspot{padding:0}#transcript a{color:#008780}#transcript{font-family:Arial,sans-serif}nav select{font-size:14px}@media(max-width:700px){#chapter{max-width:26vw}#select{max-width:30vw}nav{gap:4px}nav button{padding:8px}#count{font-size:10px}}'
+css+='\n#support-toggle{font-size:12px;white-space:nowrap}#select{max-width:32vw}@media(max-width:700px){#chapter{display:none}#support-toggle{font-size:10px;padding:6px}#select{max-width:30vw}}'
 script='''
 const image=document.querySelector('#image'), links=document.querySelector('#links'), select=document.querySelector('#select'), chapter=document.querySelector('#chapter');
 let current=1;
-slides.forEach((s,i)=>select.add(new Option(`${i+1}. ${s.title}`,i+1)));
+let activeView='main';
+const mainSlides=slides.slice();
+function fillOptions(){ensureVisibleSlide();select.replaceChildren();slides.forEach((s,i)=>{const option=new Option(`${i+1}. ${s.title}${isSlideHidden(s)?' (oculto)':''}`,i+1);option.disabled=isSlideHidden(s);select.add(option)})}
+function switchView(view){activeView=view;slides.splice(0,slides.length,...(view==='support'?supportSlides:mainSlides));fillOptions();document.querySelector('#support-toggle').textContent=view==='support'?'Voltar à apresentação':'Material de apoio';}
+fillOptions();
 function go(n){
- current=Math.max(1,Math.min(slides.length,Number(n)||1));const s=slides[current-1];
+ stopShell();stopSelection();stopSubsequence();document.querySelector('#shell-animation')?.remove();
+ const requested=Math.max(1,Math.min(slides.length,Number(n)||1));const direction=requested>=current?1:-1;
+ current=findVisibleSlide(slides,requested,direction)??findVisibleSlide(slides,requested,-direction)??1;const s=slides[current-1];
  image.src=s.image;image.alt=s.title;links.replaceChildren();
- s.links.forEach(l=>{const b=document.createElement(typeof l.target==='number'?'button':'a');b.className='hotspot';b.style.cssText=`left:${l.x}%;top:${l.y}%;width:${l.w}%;height:${l.h}%`;b.setAttribute('aria-label',l.label);b.title=l.label;if(typeof l.target==='number')b.onclick=()=>go(l.target);else {b.href=l.target;b.target='_blank';b.rel='noopener noreferrer'}links.append(b)});
- select.value=current;chapter.value=s.part==='Bibliografia'?'bibliografia':['Comparação','Conclusão'].includes(s.part)?'comparacao':current<=SHELL_COUNT?'shell':'selection';document.querySelector('#count').textContent=`${current} / ${slides.length}`;
- document.querySelector('#prev').disabled=current===1;document.querySelector('#next').disabled=current===slides.length;
- document.querySelector('#text').textContent=s.text;document.title=`${s.title} — Shell e Selection Sort`;history.replaceState(null,'',`#slide-${current}`);
+ if(s.animation==='shell'){shellPosition=0;mountShell()}
+ if(s.animation==='selection'){selectionPosition=0;mountSelection()}
+ if(s.animation==='subsequences'){subsequencePosition=0;mountSubsequence()}
+ s.links.forEach(l=>{const b=document.createElement(typeof l.target==='number'?'button':'a');b.className='hotspot';b.style.cssText=`left:${l.x}%;top:${l.y}%;width:${l.w}%;height:${l.h}%`;b.setAttribute('aria-label',l.label);b.title=l.label;if(typeof l.target==='number')b.onclick=()=>{if(l.view&&l.view!==activeView)switchView(l.view);go(l.target)};else {b.href=l.target;b.target='_blank';b.rel='noopener noreferrer'}links.append(b)});
+ select.value=current;chapter.value=s.part==='Bibliografia'?'bibliografia':['Comparação','Conclusão'].includes(s.part)?'comparacao':s.part==='Shell Sort'?'shell':'selection';document.querySelector('#count').textContent=`${current} / ${slides.length}`;
+ document.querySelector('#prev').disabled=findVisibleSlide(slides,current-1,-1)===null;document.querySelector('#next').disabled=findVisibleSlide(slides,current+1,1)===null;
+ document.querySelector('#text').textContent=s.text;document.title=`${s.title} — Shell e Selection Sort`;history.replaceState(null,'',activeView==='support'?`#apoio-${current}`:`#slide-${current}`);
 }
-document.querySelector('#prev').onclick=()=>go(current-1);document.querySelector('#next').onclick=()=>go(current+1);select.onchange=()=>go(select.value);chapter.onchange=()=>go(chapter.value==='comparacao'?SHELL_COUNT+28:chapter.value==='bibliografia'?slides.length:chapter.value==='shell'?1:SHELL_COUNT+1);
+document.querySelector('#prev').onclick=()=>moveSlide(-1);document.querySelector('#next').onclick=()=>moveSlide(1);select.onchange=()=>go(select.value);chapter.onchange=()=>{const parts={shell:['Shell Sort'],selection:['Selection Sort'],comparacao:['Comparação','Conclusão'],bibliografia:['Bibliografia']};const index=slides.findIndex(s=>!isSlideHidden(s)&&parts[chapter.value].includes(s.part));if(index>=0)go(index+1)};
+document.querySelector('#support-toggle').onclick=()=>{switchView(activeView==='main'?'support':'main');go(1)};
 async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{}}
 document.querySelector('#full').onclick=fullscreen;
-document.addEventListener('keydown',e=>{if(['SELECT','BUTTON','INPUT','A','SUMMARY'].includes(document.activeElement.tagName))return;if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(current+1)}if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(current-1)}if(e.key==='Home')go(1);if(e.key==='End')go(slides.length);if(e.key.toLowerCase()==='f')fullscreen()});
-let startX;image.addEventListener('touchstart',e=>startX=e.changedTouches[0].clientX,{passive:true});image.addEventListener('touchend',e=>{const delta=e.changedTouches[0].clientX-startX;if(Math.abs(delta)>60)go(current+(delta<0?1:-1))},{passive:true});
-window.addEventListener('hashchange',()=>go(location.hash.split('-')[1]));go(location.hash.split('-')[1]);
+document.addEventListener('keydown',e=>{if(document.querySelector('#visibility-dialog').open)return;if(e.key.toLowerCase()==='m'&&!['INPUT','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();openSlideManager();return}if(['SELECT','BUTTON','INPUT','A','SUMMARY'].includes(document.activeElement.tagName))return;if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();moveSlide(1)}if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();moveSlide(-1)}if(e.key==='Home')go(findVisibleSlide(slides,1,1));if(e.key==='End')go(findVisibleSlide(slides,slides.length,-1));if(e.key.toLowerCase()==='f')fullscreen()});
+let startX;image.addEventListener('touchstart',e=>startX=e.changedTouches[0].clientX,{passive:true});image.addEventListener('touchend',e=>{const delta=e.changedTouches[0].clientX-startX;if(Math.abs(delta)>60)moveSlide(delta<0?1:-1)},{passive:true});
+function loadHash(){const view=location.hash.startsWith('#apoio-')?'support':'main';if(view!==activeView)switchView(view);go(location.hash.split('-')[1])}
+setupSlideManager();window.addEventListener('hashchange',loadHash);loadHash();
 '''
 doc='''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shell e Selection Sort</title><meta name="description" content="Shell Sort: história, gaps e resultados experimentais. Apresentação completa de Selection Sort."><style>'''+css+'''</style></head><body><main><div id="slide" aria-label="Apresentação"><img id="image" alt="" draggable="false"><div id="links"></div></div></main><nav aria-label="Navegação"><button id="prev" aria-label="Slide anterior">←</button><label for="chapter" class="sr">Parte da apresentação</label><select id="chapter"><option value="shell">Shell Sort</option><option value="selection">Selection Sort</option></select><label for="select" class="sr">Escolher slide</label><select id="select"></select><span id="count" aria-live="polite"></span><button id="next" aria-label="Próximo slide">→</button><button id="full" aria-label="Tela cheia" title="Tela cheia (F)">⛶</button></nav><details id="transcript"><summary>Texto do slide</summary><pre id="text"></pre><p>Setas: navegar · F: tela cheia · Home: início · End: último slide.</p></details><script>const SHELL_COUNT='''+str(offset)+';const slides='+json.dumps(slides,ensure_ascii=False).replace('</','<\\/')+';\n'+script+'</script></body></html>'
+doc=doc.replace('<nav aria-label="Navegação">','<nav aria-label="Navegação"><button id="support-toggle">Material de apoio</button>')
+doc=doc.replace('<button id="support-toggle">','<button id="manage-slides" title="Gerenciar slides (M)">Slides</button><button id="support-toggle">')
+doc=doc.replace('<script>const SHELL_COUNT=', '<dialog id="visibility-dialog" aria-labelledby="visibility-title"><h2 id="visibility-title">Exibir ou ocultar slides</h2><p id="visibility-summary"></p><div id="visibility-list"></div><div class="visibility-actions"><button id="visibility-hide-current">Ocultar slide atual</button><button id="visibility-all">Exibir todos</button><button id="visibility-close">Concluir</button></div></dialog><script>const SHELL_COUNT=')
+animation_script='const supportSlides='+json.dumps(support_slides,ensure_ascii=False).replace('</','<\\/')+';\n'
+animation_script+=(ROOT/'scripts/shell-animation.js').read_text(encoding='utf-8')
+animation_script+='\n'+(ROOT/'scripts/selection-animation.js').read_text(encoding='utf-8')
+animation_script+='\n'+(ROOT/'scripts/subsequence-animation.js').read_text(encoding='utf-8')
+animation_script+='\n'+(ROOT/'scripts/slide-visibility.js').read_text(encoding='utf-8')
+animation_script='const SELECTION_COUNT='+str(selection_count)+';\n'+animation_script
+doc=doc.replace(';\n'+script,';\n'+animation_script+'\n'+script)
 doc=doc.replace('<option value="selection">Selection Sort</option>','<option value="selection">Selection Sort</option><option value="bibliografia">Bibliografia</option>')
 doc=doc.replace('<option value="bibliografia">','<option value="comparacao">Comparação e conclusão</option><option value="bibliografia">')
 dest=ROOT/'Shell_e_Selection_Sort.html';dest.write_text(doc,encoding='utf-8')
 site_dir=ROOT/'site'
 site_dir.mkdir(exist_ok=True)
 (site_dir/'index.html').write_text(doc,encoding='utf-8')
-(OUT/'app-check.js').write_text('const SHELL_COUNT='+str(offset)+';const slides=[];'+script,encoding='utf-8')
+(OUT/'app-check.js').write_text('const SHELL_COUNT='+str(offset)+';const slides=[];'+animation_script+'\n'+script,encoding='utf-8')
 manifest=[dict(index=i+1,title=s['title'],part=s['part'],links=s['links']) for i,s in enumerate(slides)]
 (OUT/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
 with zipfile.ZipFile(ROOT/'distribuicao/Shell_e_Selection_Sort_Web.zip','w',zipfile.ZIP_DEFLATED) as z:
@@ -409,11 +540,12 @@ with zipfile.ZipFile(ROOT/'distribuicao/Shell_e_Selection_Sort_Web.zip','w',zipf
     for path in (ROOT/'dados').glob('*.csv'):z.write(path,'dados/'+path.name)
 with zipfile.ZipFile(ROOT/'distribuicao/site.zip','w',zipfile.ZIP_DEFLATED) as z:
     z.write(site_dir/'index.html','index.html')
-assert len(slides)==offset+28+comparison_count
-assert all(1<=l['target']<=len(slides) for s in slides for l in s['links'] if isinstance(l['target'],int))
+assert len(full_slides)==offset+selection_count+4+comparison_count
+assert all(1<=l['target']<=(len(support_slides) if l['view']=='support' else len(slides)) for s in full_slides for l in s['links'] if isinstance(l['target'],int))
 # Check that all original slide bytes, titles and text remain unchanged.
-for i,s in enumerate(slides[offset:offset+27]):
-    assert s['text']==original[i]['text']
-    assert base64.b64decode(s['image'].split(',')[1])==(ROOT/f'historico/selection-sort/dist/slides/Slide{i+1}.PNG').read_bytes()
-print(f'{offset} Shell + 27 Selection + {comparison_count} de comparação/conclusão + bibliografia = {len(slides)} slides. Links validados.')
+for number,s in zip(selection_numbers,full_slides[offset:offset+selection_count]):
+    if number==8:continue
+    assert s['text']==original[number-1]['text']
+    assert s['title']==original[number-1]['title']
+print(f'{len(slides)} slides principais + {len(support_slides)} de apoio. Links validados.')
 print(dest)

@@ -2,6 +2,15 @@
 
 Abra `Shell_e_Selection_Sort.html` no navegador. O arquivo é completo e funciona sem internet.
 
+Use o botão **Slides** (ou a tecla **M**, inclusive em tela cheia) para ocultar slides. Desmarque os que devem ser pulados; “Exibir todos” os restaura. Botões, teclado e gestos navegam apenas pelos visíveis. A seleção fica salva no navegador quando o armazenamento local está disponível e é independente para cada slide da apresentação e do apoio. Sempre permanece pelo menos um slide visível por parte. Os PDFs continuam completos, sem aplicar essa preferência local.
+
+A sequência principal tem **28 slides**: capa, Shell, Selection, computador, comparação e conclusão, com dois slides de bibliografia no final. Além das animações de Shell e Selection, há um slide extra de Shell por subsequências e um resumo sobre a dificuldade da análise matemática. O botão **Material de apoio** abre 35 slides adicionais com tabelas, gráficos de contagens e explicações completas; “Voltar à apresentação” retorna à sequência principal. Todo o conteúdo está incorporado no mesmo HTML.
+
+O PDF principal contém os 28 slides. `output/pdf/Shell_e_Selection_Sort_Apoio.pdf` contém o apoio completo. Para exportar novamente, execute `python scripts/export_pdf.py` e `python scripts/export_pdf.py --apoio` (requer ReportLab e PyMuPDF). Mantenha os dois PDFs na mesma pasta para os links entre eles funcionarem.
+
+O exemplo de Shell é uma animação interativa com vetor, código em C e linha ativa. Há reprodução, pausa, passos para frente e para trás, reinício, velocidade e atalhos para gaps 4, 2 e 1. `scripts/shell-animation.js` gera os estados da execução; o CSS fica em `scripts/shell-animation.css`. O PDF mostra um resumo estático com o código, pois não executa animações.
+Selection também tem uma animação com os mesmos controles, índices i/j/menor, ordem da busca, parte ordenada, troca e contadores de comparações e escritas. Ela substitui a sequência antiga de exemplos estáticos. Os arquivos são `scripts/selection-animation.js` e `scripts/selection-animation.css`.
+
 ## Pastas
 
 - `dados/`: os três CSVs originais do Shell Sort.

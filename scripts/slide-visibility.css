@@ -1,0 +1,11 @@
+#manage-slides{font-size:12px;white-space:nowrap}
+#visibility-dialog{width:min(760px,92vw);max-height:85dvh;border:1px solid #d1d9d8;border-radius:12px;background:#f5f4ef;color:#172b36;padding:24px;font-family:'DejaVu Sans',Arial,sans-serif}
+#visibility-dialog::backdrop{background:#172b3680}
+#visibility-dialog h2{margin:0 0 12px;font-size:24px}
+#visibility-summary{line-height:1.5;font-size:14px;color:#52616a}
+#visibility-list{max-height:50dvh;overflow:auto;border-block:1px solid #d1d9d8;margin:16px 0}
+.visibility-row{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #e0e4e2;font-size:14px;cursor:pointer}
+.visibility-row input{accent-color:#008780;width:18px;height:18px;flex-shrink:0}
+.visibility-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}.visibility-actions button{font-size:13px}
+#visibility-close{background:#008780;color:white}
+@media(max-width:700px){#manage-slides{font-size:10px;padding:6px}#select{max-width:24vw}}
