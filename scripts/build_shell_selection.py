@@ -51,11 +51,13 @@ save('Shell Sort e Selection Sort',[
 
 new('História do Shell Sort','TRÊS NOMES PARA LEMBRAR')
 for y,year,name,body in [
- (290,'1959','Donald L. Shell','Publicou o Shell Sort como uma melhoria\nda ordenação por inserção.'),
- (480,'1973','Donald E. Knuth','Apresentou a sequência de gaps\ngerada por 3h + 1.'),
- (670,'2001','Marcin Ciura','Publicou um estudo experimental de sequências\npara melhorar o desempenho médio.')]:
-    text(106,y,year,52,True,TEAL);text(440,y,name,43,True);text(440,y+64,body,36)
-note('Shell Sort aproxima os valores antes da última passagem.');save('História do Shell Sort')
+ (275,'1959','Donald L. Shell','Publicou “A High-Speed Sorting Procedure”, na Communications of the ACM.\nMelhorou a inserção ao comparar valores distantes,\nreduzindo os deslocamentos nas passagens finais.'),
+ (485,'1973','Donald E. Knuth','Apresentou a sequência 1, 4, 13, 40, …, gerada por 3h + 1.\nEla aparece no volume 3 de The Art of Computer Programming.\nA escolha dos gaps passou a ser central na análise do algoritmo.'),
+ (695,'2001','Marcin Ciura','Estudou experimentalmente sequências para melhorar o desempenho médio.\nA sequência ficou conhecida pelo bom desempenho nos testes.\nNo nosso trabalho, usamos uma lista fixa, sem a versão estendida.')]:
+    text(106,y,year,52,True,TEAL);text(440,y,name,43,True);text(440,y+64,body,31)
+text(105,960,'A evolução do Shell Sort está ligada à busca por melhores sequências de gaps.',29,False,MUTED)
+save('História do Shell Sort',[
+    dict(x=22.9,y=31,w=70,h=13,target='https://doi.org/10.1145/368370.368387',label='Shell: artigo original de 1959')])
 
 new('Como funciona o Shell Sort','ORDENA PRIMEIRO OS VALORES MAIS DISTANTES')
 for y,num,title,body in [
@@ -327,15 +329,17 @@ for i,s in enumerate(original,1):
         note('A parte ordenada cresce uma posição a cada rodada.')
         save('Como funciona o Selection Sort')
     elif i==21:
-        new('Complexidade do Selection Sort','MELHOR E PIOR CASO DA VERSÃO COM TROCA DIRETA')
-        for x,label in zip([110,820,1320],['Algoritmo','Melhor caso','Pior caso']):text(x,296,label,36,True,TEAL)
-        box((105,378,1800,480),'white')
-        for x,label in zip([125,835,1335],['Selection Sort','Θ(n²)','Θ(n²)']):text(x,405,label,40,x==125)
-        box((105,535,1800,725),PALE)
-        text(142,565,'Mesmo com a entrada já ordenada',40,True,TEAL)
-        text(142,635,'O algoritmo continua procurando o menor em toda a parte restante.',35)
-        text(104,826,'A ordem inicial não muda a quantidade de comparações.',36)
-        text(104,882,'Memória auxiliar da ordenação: Θ(1).',36)
+        new('Complexidade do Selection Sort','CONTANDO AS COMPARAÇÕES PARA CHEGAR A Θ(n²)')
+        text(105,285,'1 • Comparações em cada rodada',38,True,TEAL)
+        text(105,350,'1ª rodada: n − 1.  2ª rodada: n − 2.  Até a última: 1 comparação.',34)
+        box((105,430,1800,625),PALE)
+        text(142,455,'C(n) = (n − 1) + (n − 2) + … + 1',42,True)
+        text(142,535,'C(n) = n(n − 1) / 2 = (n² − n) / 2',42)
+        text(105,675,'2 • O termo que domina é n²',38,True,TEAL)
+        text(105,745,'C(n) = (n² − n) / 2    ⇒    Θ(n²)',42,True)
+        text(105,830,'O fator 1/2 e o termo linear não mudam a ordem de crescimento.',33)
+        text(105,905,'Melhor e pior caso: Θ(n²). A ordem inicial não muda essa contagem.',33)
+        text(105,963,'As trocas custam O(n) no total; as comparações dominam o tempo.',29,False,MUTED)
         save('Selection Sort: complexidade')
     elif i==23:
         new('Selection Sort é estável?','NÃO GARANTE A ORDEM ORIGINAL DOS VALORES IGUAIS')
@@ -382,7 +386,6 @@ for i,(label,value) in enumerate(specs):
     if i%2==0:box((105,y-8,1800,y+64),'white')
     text(135,y+9,label,34,True,TEAL)
     text(650,y+9,value,34)
-note('Configuração informada no relatório do trabalho.')
 save('Computador utilizado nos testes');slides[-1]['part']='Comparação'
 
 new('Selection Sort × Shell Sort','COMPARAÇÃO COM SHELL POR METADES')
