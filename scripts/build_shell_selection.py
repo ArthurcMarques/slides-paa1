@@ -140,10 +140,30 @@ text(104,882,'com no máximo nove passagens.',36)
 save('Complexidades: melhor e pior caso')
 
 new('Outras sequências','REFERÊNCIAS DO RELATÓRIO: NÃO IMPLEMENTADAS NEM TESTADAS')
-for y,name,seq,bound in [(289,'Hibbard','2ᵏ − 1: 1, 3, 7, 15, 31, …','O(n³ᐟ²)'),(475,'Pratt','2ᵖ3ᑫ: 1, 2, 3, 4, 6, 8, 9, 12, …','O(n log² n)'),(661,'Sedgewick','Sequência específica: 1, 8, 23, 77, 281, …','O(n⁴ᐟ³)')]:
-    text(105,y,name,42,True,TEAL);text(105,y+65,seq,35)
-    text(1410,y+24,bound,42,True)
-note('Limites de pior caso. A escolha dos gaps pode alterar a complexidade.');save('Outras sequências: limites de referência')
+xs=[110,790,1430]
+for x,label in zip(xs,['Sequência','Gaps','Pior caso']):text(x,296,label,36,True,TEAL)
+for i,(name,formula,seq,bound) in enumerate([
+    ('Hibbard','2ᵏ − 1','1, 3, 7, 15, 31, …','O(n³ᐟ²)'),
+    ('Pratt','2ᵖ · 3ᑫ','1, 2, 3, 4, 6, 8, 9, 12, …','O(n log² n)'),
+    ('Sedgewick','1; depois 4ᵏ + 3 · 2ᵏ⁻¹ + 1','1, 8, 23, 77, 281, …','O(n⁴ᐟ³)')]):
+    y=390+i*150;box((105,y-12,1800,y+120),'white' if i%2==0 else PALE)
+    text(125,y+5,name,36,True)
+    if name=='Pratt':
+        # Desenhar os expoentes com a fonte comum evita o glifo Unicode de q,
+        # que nesta fonte parece um algarismo 9 na linha de base.
+        formula_x=125
+        for token,raised in [('2',False),('p',True),(' · 3',False),('q',True)]:
+            token_font=font(20 if raised else 28)
+            d.text((formula_x,y+52 if raised else y+65),token,font=token_font,fill=INK)
+            formula_x+=d.textlength(token,font=token_font)
+        textlog.append('2^p · 3^q')
+    else:
+        text(125,y+60,formula,28)
+    text(805,y+32,seq,30)
+    text(1445,y+32,bound,34)
+text(104,870,'Hibbard e Sedgewick: k ≥ 1. Pratt: p, q ≥ 0.',30)
+text(104,950,'Limites de pior caso. A escolha dos gaps pode alterar a complexidade.',30,False,MUTED)
+save('Outras sequências: limites de referência')
 
 new('Shell: vantagens e desvantagens','POUCA MEMÓRIA EXTRA, MAS O DESEMPENHO DEPENDE DOS GAPS')
 box((105,300,930,845),PALE)
