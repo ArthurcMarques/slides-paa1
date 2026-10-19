@@ -2,9 +2,11 @@
 
 Abra `Shell_e_Selection_Sort.html` no navegador. O arquivo é completo e funciona sem internet.
 
+No celular, a navegação se organiza em linhas e as animações exibem vetor e código em uma coluna, com rolagem vertical. Use **Ampliar** para ler slides estáticos arrastando na horizontal e **Ajustar** para voltar à visão completa. Deslizar lateralmente troca de slide quando a ampliação está desativada; os controles das animações continuam independentes.
+
 Use o botão **Slides** (ou a tecla **M**, inclusive em tela cheia) para ocultar slides. Desmarque os que devem ser pulados; “Exibir todos” os restaura. Botões, teclado e gestos navegam apenas pelos visíveis. A seleção fica salva no navegador quando o armazenamento local está disponível e é independente para cada slide da apresentação e do apoio. Sempre permanece pelo menos um slide visível por parte. Os PDFs continuam completos, sem aplicar essa preferência local.
 
-A sequência principal tem **29 slides**: capa, Shell, Selection, computador, comparação e conclusão, com dois slides de bibliografia, um para cada algoritmo, no final. Além das animações de Shell e Selection, há um slide extra de Shell por subsequências e um resumo sobre a dificuldade da análise matemática. O botão **Material de apoio** abre 34 slides adicionais com tabelas, gráficos de contagens e explicações completas; “Voltar à apresentação” retorna à sequência principal. Todo o conteúdo está incorporado no mesmo HTML.
+A sequência principal tem **30 slides**: capa, Shell, Selection, computador, comparação e conclusão, com dois slides de bibliografia, um para cada algoritmo, no final. Além das animações de Shell e Selection, há um slide extra de Shell por subsequências e um resumo sobre a dificuldade da análise matemática. O botão **Material de apoio** abre 33 slides adicionais com tabelas, gráficos de contagens e explicações completas; “Voltar à apresentação” retorna à sequência principal. Todo o conteúdo está incorporado no mesmo HTML.
 
 O PDF principal contém os 27 slides. `output/pdf/Shell_e_Selection_Sort_Apoio.pdf` contém o apoio completo. Para exportar novamente, execute `python scripts/export_pdf.py` e `python scripts/export_pdf.py --apoio` (requer ReportLab e PyMuPDF). Mantenha os dois PDFs na mesma pasta para os links entre eles funcionarem.
 

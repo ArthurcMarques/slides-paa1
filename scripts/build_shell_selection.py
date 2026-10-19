@@ -237,8 +237,6 @@ for y,title,body in [
     (465,'Ciura fixo','Foi mais rápido nas entradas crescentes maiores, mas teve alto custo\nna decrescente. Sua lista termina em 1750.'),
     (690,'Tamanho e ordem da entrada','Os resultados mudaram conforme o tamanho do vetor e sua organização.')]:
     text(105,y,title,41,True,TEAL);text(105,y+65,body,33)
-text(105,900,'Uma medição por teste: repetir ajudaria a avaliar a variação dos tempos.',30,False,MUTED)
-text(105,955,'Os resultados medidos não são uma garantia para qualquer entrada.',30,False,MUTED)
 save('Conclusão: gaps e limites dos testes')
 
 offset=len(slides)
@@ -563,7 +561,7 @@ save('Bibliografia do Selection Sort',links);slides[-1]['part']='Bibliografia'
 full_slides=slides[:]
 # A bibliografia de análise do Shell foi reunida no slide de fontes do algoritmo.
 full_slides.pop(62)
-main_numbers=[1,2,3,4,5,61,6,7,62,9,10,12,14,28,30,35,36,43,45,46,50,51,52,54,56,58,59,60,63]
+main_numbers=[1,2,3,4,5,61,6,7,8,62,9,10,12,14,28,30,35,36,43,45,46,50,51,52,54,56,58,59,60,63]
 assert len(full_slides)==63
 support_numbers=[n for n in range(1,len(full_slides)+1) if n not in main_numbers]
 destinations={n:('main',main_numbers.index(n)+1) if n in main_numbers else ('support',support_numbers.index(n)+1) for n in range(1,len(full_slides)+1)}
@@ -589,6 +587,7 @@ for face,bold in [('DejaVuSans.ttf',400),('DejaVuSans-Bold.ttf',700)]:
     css+="@font-face{font-family:'DejaVu Sans';font-weight:"+str(bold)+";src:url(data:font/ttf;base64,"+base64.b64encode((FONT/face).read_bytes()).decode()+") format('truetype');}"
 css+='\n#chapter{max-width:22vw}nav{gap:8px}.hotspot{padding:0}#transcript a{color:#008780}#transcript{font-family:Arial,sans-serif}nav select{font-size:14px}@media(max-width:700px){#chapter{max-width:26vw}#select{max-width:30vw}nav{gap:4px}nav button{padding:8px}#count{font-size:10px}}'
 css+='\n#support-toggle{font-size:12px;white-space:nowrap}#select{max-width:32vw}@media(max-width:700px){#chapter{display:none}#support-toggle{font-size:10px;padding:6px}#select{max-width:30vw}}'
+css+=(ROOT/'scripts/mobile.css').read_text(encoding='utf-8')
 script='''
 const image=document.querySelector('#image'), links=document.querySelector('#links'), select=document.querySelector('#select'), chapter=document.querySelector('#chapter');
 let current=1;
@@ -601,6 +600,9 @@ function go(n){
  stopShell();stopSelection();stopSubsequence();document.querySelector('#shell-animation')?.remove();
  const requested=Math.max(1,Math.min(slides.length,Number(n)||1));const direction=requested>=current?1:-1;
  current=findVisibleSlide(slides,requested,direction)??findVisibleSlide(slides,requested,-direction)??1;const s=slides[current-1];
+ document.querySelector('#slide').classList.toggle('animated',Boolean(s.animation));
+ document.querySelector('#zoom').disabled=Boolean(s.animation);
+ document.querySelector('main').scrollLeft=0;
  image.src=s.image;image.alt=s.title;links.replaceChildren();
  if(s.animation==='shell'){shellPosition=0;mountShell()}
  if(s.animation==='selection'){selectionPosition=0;mountSelection()}
@@ -614,13 +616,18 @@ document.querySelector('#prev').onclick=()=>moveSlide(-1);document.querySelector
 document.querySelector('#support-toggle').onclick=()=>{switchView(activeView==='main'?'support':'main');go(1)};
 async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{}}
 document.querySelector('#full').onclick=fullscreen;
+document.querySelector('#zoom').onclick=()=>{const expanded=document.querySelector('main').classList.toggle('zoomed');document.querySelector('#zoom').textContent=expanded?'Ajustar':'Ampliar';document.querySelector('#zoom').setAttribute('aria-pressed',String(expanded))};
 document.addEventListener('keydown',e=>{if(document.querySelector('#visibility-dialog').open)return;if(e.key.toLowerCase()==='m'&&!['INPUT','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();openSlideManager();return}if(['SELECT','BUTTON','INPUT','A','SUMMARY'].includes(document.activeElement.tagName))return;if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();moveSlide(1)}if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();moveSlide(-1)}if(e.key==='Home')go(findVisibleSlide(slides,1,1));if(e.key==='End')go(findVisibleSlide(slides,slides.length,-1));if(e.key.toLowerCase()==='f')fullscreen()});
-let startX;image.addEventListener('touchstart',e=>startX=e.changedTouches[0].clientX,{passive:true});image.addEventListener('touchend',e=>{const delta=e.changedTouches[0].clientX-startX;if(Math.abs(delta)>60)moveSlide(delta<0?1:-1)},{passive:true});
+let touchStart=null;const slideSurface=document.querySelector('#slide');
+slideSurface.addEventListener('touchstart',e=>{touchStart=null;if(e.touches.length!==1||e.target.closest('button,a,select,input,#shell-animation')||document.querySelector('main').classList.contains('zoomed'))return;touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
+slideSurface.addEventListener('touchend',e=>{if(!touchStart)return;const dx=e.changedTouches[0].clientX-touchStart.x,dy=e.changedTouches[0].clientY-touchStart.y;touchStart=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)moveSlide(dx<0?1:-1)},{passive:true});
+slideSurface.addEventListener('touchcancel',()=>touchStart=null,{passive:true});
 function loadHash(){const view=location.hash.startsWith('#apoio-')?'support':'main';if(view!==activeView)switchView(view);go(location.hash.split('-')[1])}
 setupSlideManager();window.addEventListener('hashchange',loadHash);loadHash();
 '''
 doc='''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shell e Selection Sort</title><meta name="description" content="Shell Sort: história, gaps e resultados experimentais. Apresentação completa de Selection Sort."><style>'''+css+'''</style></head><body><main><div id="slide" aria-label="Apresentação"><img id="image" alt="" draggable="false"><div id="links"></div></div></main><nav aria-label="Navegação"><button id="prev" aria-label="Slide anterior">←</button><label for="chapter" class="sr">Parte da apresentação</label><select id="chapter"><option value="shell">Shell Sort</option><option value="selection">Selection Sort</option></select><label for="select" class="sr">Escolher slide</label><select id="select"></select><span id="count" aria-live="polite"></span><button id="next" aria-label="Próximo slide">→</button><button id="full" aria-label="Tela cheia" title="Tela cheia (F)">⛶</button></nav><details id="transcript"><summary>Texto do slide</summary><pre id="text"></pre><p>Setas: navegar · F: tela cheia · Home: início · End: último slide.</p></details><script>const SHELL_COUNT='''+str(offset)+';const slides='+json.dumps(slides,ensure_ascii=False).replace('</','<\\/')+';\n'+script+'</script></body></html>'
 doc=doc.replace('<nav aria-label="Navegação">','<nav aria-label="Navegação"><button id="support-toggle">Material de apoio</button>')
+doc=doc.replace('<button id="full"','<button id="zoom" aria-pressed="false" title="Ampliar slide e arrastar para ler">Ampliar</button><button id="full"')
 doc=doc.replace('<button id="support-toggle">','<button id="manage-slides" title="Gerenciar slides (M)">Slides</button><button id="support-toggle">')
 doc=doc.replace('<script>const SHELL_COUNT=', '<dialog id="visibility-dialog" aria-labelledby="visibility-title"><h2 id="visibility-title">Exibir ou ocultar slides</h2><p id="visibility-summary"></p><div id="visibility-list"></div><div class="visibility-actions"><button id="visibility-hide-current">Ocultar slide atual</button><button id="visibility-all">Exibir todos</button><button id="visibility-close">Concluir</button></div></dialog><script>const SHELL_COUNT=')
 animation_script='const supportSlides='+json.dumps(support_slides,ensure_ascii=False).replace('</','<\\/')+';\n'
